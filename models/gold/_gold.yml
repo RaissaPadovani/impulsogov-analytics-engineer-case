@@ -1,0 +1,116 @@
+version: 2
+
+models:
+  - name: lista_nominal_hipertensao
+    description: >
+      Tabela Gold da Lista Nominal de Hipertensão. Possui uma linha por cidadão
+      elegível no snapshot de 2026-08-01 e reúne identificação, equipe de vínculo,
+      contato e situação das três boas práticas de acompanhamento.
+      Microárea não é disponibilizada porque o atributo não existe nas fontes do case.
+
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Chave primária da tabela; identificador do cidadão no PEC."
+        tests:
+          - not_null
+          - unique
+
+      - name: no_cidadao
+        description: >
+          Nome do cidadão para uso operacional da lista nominal. É nullable porque
+          a origem contém cidadãos elegíveis sem nome; essas pessoas são preservadas
+          para não serem excluídas do acompanhamento por uma falha cadastral.
+
+      - name: st_nome_ausente
+        description: >
+          True quando o cadastro do cidadão não possui nome. Permite ao produto
+          tratar o caso de forma explícita sem remover a pessoa da Lista Nominal.
+        tests:
+          - not_null
+
+      - name: dt_nascimento
+        description: >
+          Data de nascimento válida para o snapshot. Fica nula quando a origem
+          contém uma data posterior à data de referência.
+
+      - name: idade
+        description: "Idade completa em anos na data de referência."
+
+      - name: st_data_nascimento_invalida
+        description: >
+          Indica que a data de nascimento da origem é posterior ao snapshot e,
+          portanto, não foi usada para exibição nem para cálculo da idade.
+        tests:
+          - not_null
+
+      - name: nu_cns
+        description: "Cartão Nacional de Saúde, quando disponível."
+
+      - name: nu_cpf_cidadao
+        description: "CPF do cidadão, quando disponível."
+
+      - name: nu_telefone_celular
+        description: "Telefone usado pela equipe para contato, quando disponível."
+
+      - name: nu_ine
+        description: "INE da equipe de vínculo; chave estável da equipe."
+
+      - name: no_equipe
+        description: "Nome da equipe de vínculo conforme cadastro mestre."
+
+      - name: dt_ultima_consulta
+        description: "Data da consulta válida mais recente até o snapshot."
+
+      - name: status_consulta
+        description: "Situação da boa prática de consulta."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']
+
+      - name: dt_ultima_pressao
+        description: "Data da aferição válida de pressão mais recente até o snapshot."
+
+      - name: valor_ultima_pressao
+        description: >
+          Valor da última pressão arterial. O dado foi extraído de
+          propriedades.pressao_arterial devido à ausência de preenchimento
+          no campo documentado da origem.
+
+      - name: status_pressao
+        description: "Situação da boa prática de aferição de pressão arterial."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']
+
+      - name: dt_ultimo_peso_altura
+        description: "Data do registro válido mais recente com peso e altura simultâneos."
+
+      - name: ultimo_peso
+        description: "Peso do último registro simultâneo válido."
+
+      - name: ultima_altura_cm
+        description: "Altura em centímetros do mesmo registro do último peso."
+
+      - name: status_peso_altura
+        description: "Situação da boa prática de peso e altura."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']
+
+      - name: st_possui_pendencia
+        description: >
+          True quando pelo menos uma das três boas práticas não está Em dia.
+          Apoia o filtro operacional 'Pelo menos uma a fazer' do protótipo.
+        tests:
+          - not_null
+
+      - name: data_referencia
+        description: "Data fixa do snapshot do case."
+        tests:
+          - not_null

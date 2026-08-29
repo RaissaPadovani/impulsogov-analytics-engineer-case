@@ -1,0 +1,100 @@
+version: 2
+
+models:
+  - name: int_populacao_hipertensao
+    description: >
+      População elegível para a Lista Nominal de Hipertensão na data de referência.
+      Considera o estado mais recente entre HIPERTENSÃO e HIPERTENSÃO - CONDIÇÃO RESOLVIDA,
+      exclui pessoas falecidas e ignora eventos posteriores ao snapshot.
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Identificador único do cidadão no PEC."
+        tests:
+          - not_null
+          - unique
+
+      - name: classificacao_atual_hipertensao
+        description: "Estado da condição usado para elegibilidade; neste modelo deve ser HIPERTENSÃO."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['HIPERTENSÃO']
+
+      - name: dt_ultima_condicao_hipertensao
+        description: "Data do evento mais recente de hipertensão/resolução usado para definir o estado atual."
+        tests:
+          - not_null
+
+      - name: data_referencia
+        description: "Data fixa do snapshot do case: 2026-08-01."
+        tests:
+          - not_null
+
+  - name: int_ultima_consulta
+    description: >
+      Calcula a última consulta válida de cada pessoa elegível e classifica a boa prática
+      de consulta em Em dia, Atrasada ou Nunca realizada usando uma janela de 6 meses.
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Identificador do cidadão elegível para a Lista Nominal."
+        tests:
+          - not_null
+          - unique
+
+      - name: status_consulta
+        description: "Status da boa prática de consulta na data de referência."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']
+
+  - name: int_ultima_pressao
+    description: >
+      Calcula a última aferição válida de pressão arterial de cada pessoa elegível
+      e classifica a boa prática em Em dia, Atrasada ou Nunca realizada usando uma janela de 6 meses.
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Identificador do cidadão elegível para a Lista Nominal."
+        tests:
+          - not_null
+          - unique
+
+      - name: valor_ultima_pressao
+        description: >
+          Valor da última aferição, extraído de propriedades.pressao_arterial,
+          pois o campo documentado qt_afericao_pressao_arterial veio vazio na origem.
+
+      - name: status_pressao
+        description: "Status da boa prática de aferição de pressão na data de referência."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']
+
+  - name: int_ultimo_peso_altura
+    description: >
+      Calcula o último registro válido e simultâneo de peso e altura de cada pessoa elegível
+      e classifica a boa prática em Em dia, Atrasada ou Nunca realizada usando uma janela de 12 meses.
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Identificador do cidadão elegível para a Lista Nominal."
+        tests:
+          - not_null
+          - unique
+
+      - name: ultimo_peso
+        description: "Peso do registro válido mais recente, extraído do JSON propriedades."
+
+      - name: ultima_altura_cm
+        description: "Altura em centímetros do mesmo registro em que o peso foi informado."
+
+      - name: status_peso_altura
+        description: "Status da boa prática de registro simultâneo de peso e altura."
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Em dia', 'Atrasada', 'Nunca realizada']

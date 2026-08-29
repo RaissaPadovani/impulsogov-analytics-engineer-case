@@ -1,0 +1,7 @@
+impulsogov_case:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: impulsogov.duckdb
+      threads: 4

@@ -1,0 +1,11 @@
+version: 2
+
+models:
+  - name: br_cidadao_pec
+    description: "Espelho do arquivo bruto cidadao_pec.csv, sem regra de negócio."
+
+  - name: br_atendimento_individual
+    description: "Espelho do arquivo bruto atendimento_individual.csv, sem regra de negócio."
+
+  - name: br_procedimentos
+    description: "Espelho do arquivo bruto procedimentos.csv, sem regra de negócio."

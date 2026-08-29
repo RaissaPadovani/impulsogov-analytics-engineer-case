@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.vscode/settings.json
+
+target/
+logs/
+dbt_packages/
+*.duckdb
+*.duckdb.wal
+dbt_internal_packages/

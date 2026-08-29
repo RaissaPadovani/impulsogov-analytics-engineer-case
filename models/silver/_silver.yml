@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: stg_cidadao_pec
+    description: "Cadastro de cidadãos com tipagem técnica, ainda sem regras de elegibilidade."
+    columns:
+      - name: co_fat_cidadao_pec
+        description: "Identificador do cidadão no PEC."
+        tests:
+          - not_null
+          - unique
+
+  - name: stg_atendimento_individual
+    description: "Atendimentos tipados e deduplicados pela transmissão mais recente de cada identificador."
+    columns:
+      - name: co_seq_fat_atd_ind
+        description: "Identificador do registro de atendimento."
+        tests:
+          - not_null
+          - unique
+      - name: co_fat_cidadao_pec
+        tests:
+          - not_null
+
+  - name: stg_procedimentos
+    description: "Procedimentos tipados e deduplicados pela transmissão mais recente, com medidas extraídas do JSON propriedades."
+    columns:
+      - name: co_seq_fat_proced
+        description: "Identificador do procedimento."
+        tests:
+          - not_null
+          - unique
+      - name: co_fat_cidadao_pec
+        tests:
+          - not_null
+      - name: pressao_arterial
+        description: "Valor da aferição extraído de propriedades.pressao_arterial quando disponível."
+      - name: peso
+        description: "Peso em kg extraído de propriedades.peso quando disponível."
+      - name: altura_cm
+        description: "Altura em centímetros extraída de propriedades.altura quando disponível."

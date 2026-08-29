@@ -1,0 +1,33 @@
+name: impulsogov_case
+version: '1.0.0'
+config-version: 2
+
+profile: impulsogov_case
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  data_path: "dados"
+  reference_date: "2026-08-01"
+
+models:
+  impulsogov_case:
+    bronze:
+      +materialized: view
+      +schema: bronze
+    silver:
+      +materialized: view
+      +schema: silver
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    gold:
+      +materialized: table
+      +schema: gold
